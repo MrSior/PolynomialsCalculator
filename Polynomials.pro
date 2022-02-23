@@ -11,11 +11,18 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    node.cpp
+    node.cpp \
+    polynomial.cpp \
+    polynomials.cpp \
+    polynomialsnode.cpp
 
 HEADERS += \
+    CharFunctions.h \
     mainwindow.h \
-    node.h
+    node.h \
+    polynomial.h \
+    polynomials.h \
+    polynomialsnode.h
 
 FORMS += \
     mainwindow.ui
