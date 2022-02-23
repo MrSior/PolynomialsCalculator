@@ -15,10 +15,14 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void ChangeList();
     Polynomials polynomials;
 
 private slots:
     void on_AddPolynomialButton_clicked();
+
+    void on_findSumButton_clicked();
 
 private:
     Ui::MainWindow *ui;

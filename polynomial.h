@@ -11,6 +11,7 @@ public:
     std::vector<int> bases;
 
     Polynomial();
+    Polynomial(Polynomial* polynomial);
 
     void Convert(std::string str);
     void Insert_head(Node* node);

@@ -12,14 +12,19 @@ void Polynomials::InsertHead(PolynomialsNode* polynomials_node){
 
 Polynomial* Polynomials::SumPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node){
     //auto* polynomials_node = new PolynomialsNode;
-    Polynomial* first_polynomial = first_polynomials_node->polynomial;
-    Polynomial* second_polynomial = second_polynomials_node->polynomial;
+    Polynomial* first_polynomial = new Polynomial(first_polynomials_node->polynomial);
+    Polynomial* second_polynomial = new Polynomial(second_polynomials_node->polynomial);
     auto* res_polynomial = new Polynomial();
     res_polynomial->Merge(first_polynomial->head, second_polynomial->head, res_polynomial->head);
     return res_polynomial;
 }
 
 void Polynomials::CheckString(std::string str){
+    for(auto i : str){
+        if (!isSign(i) && !isLetter(i) && !isNumber(i)){
+            throw std::invalid_argument("inncorect symbols");
+        }
+    }
     bool flag = false;
     while (!flag){
         flag = true;
@@ -73,4 +78,12 @@ void Polynomials::CheckString(std::string str){
     if (str.empty()){
         throw std::invalid_argument("no polynomial");
     }
+}
+
+PolynomialsNode* Polynomials::Get_element(int i){
+    PolynomialsNode* node = head;
+    while(i--){
+        node = node->next;
+    }
+    return node;
 }

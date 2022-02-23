@@ -13,6 +13,7 @@ public:
     Node* prev;
 
     Node();
+    Node(Node* node);
 
     int Get_degree_of_base(int base){
         return bases_degrees[base];

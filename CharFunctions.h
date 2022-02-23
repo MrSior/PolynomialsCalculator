@@ -5,7 +5,8 @@ inline bool isSign(char i){
     return i == '+' || i == '-' || i == '*' || i == '^';
 }
 
-inline bool isLetter(char i){
+inline bool isLetter(char& i){
+    if(i >= 65 && i <= 90) i += 32;
     return i >= 97 && i <= 125;
 }
 

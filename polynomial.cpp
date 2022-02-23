@@ -31,8 +31,15 @@ void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
         first_list = head2;
         second_list = head1;
     }
+    if(second_list->coefficient == 0){
+        delete second_list;
+        return;
+    }
     while (second_list != nullptr){
-        if (*first_list == *second_list){
+        if(first_list == nullptr){
+            first_list = second_list;
+            break;
+        } else if (*first_list == *second_list){
             first_list->coefficient += second_list->coefficient;
             if (second_list->next != nullptr){
                 second_list->next->prev = second_list->prev;
@@ -43,6 +50,21 @@ void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
             Node* tmp = second_list->next;
             delete second_list;
             second_list = tmp;
+        } else if(first_list->coefficient == 0){
+            first_list->bases_degrees.clear();
+            first_list->bases_degrees.resize(26);
+            if(first_list->next != nullptr && first_list->prev != nullptr){
+                if(first_list->prev != nullptr){
+                    first_list->prev->next = first_list->next;
+                }
+                if (first_list->next != nullptr){
+                    first_list->next->prev = first_list->prev;
+                }
+                auto tmp = first_list->next;
+                delete first_list;
+                first_list = tmp;
+                continue;
+            }
         } else if (first_list->next == nullptr) {
             first_list->next = second_list;
             second_list->prev = first_list;
@@ -59,6 +81,42 @@ void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
             first_list = first_list->next;
         }
     }
+    if(first_list != nullptr && first_list->coefficient == 0){
+        first_list->bases_degrees.clear();
+        first_list->bases_degrees.resize(26);
+        if(first_list->next != nullptr && first_list->prev != nullptr){
+            if(first_list->prev != nullptr){
+                first_list->prev->next = first_list->next;
+            }
+            if (first_list->next != nullptr){
+                first_list->next->prev = first_list->prev;
+            }
+            auto tmp = first_list->next;
+            delete first_list;
+            first_list = tmp;
+        }
+    }
+//    Node* node = new_head;
+//    while(node != nullptr){
+//        if(node->coefficient == 0){
+//            if(node->next == nullptr && node->prev == nullptr) {
+//                node->bases_degrees.clear();
+//                node->bases_degrees.resize(26);
+//                break;
+//            }
+//            if (node->next != nullptr){
+//                node->next->prev = node->prev;
+//            }
+//            if (node->prev != nullptr){
+//                node->prev->next = node->next;
+//            }
+//            Node* tmp = node->next;
+//            delete node;
+//            node = tmp;
+//        } else {
+//            node = node->next;
+//        }
+//    }
 }
 
 void Polynomial::m_sort(Node*& head, int len){
@@ -81,18 +139,15 @@ void Polynomial::Merge_sort(Node*& head){
     m_sort(head, Get_length(head));
 }
 
-//bool isSign(char i){
-//    return i == '+' || i == '-' || i == '*' || i == '^';
-//}
-
-//bool isLetter(char i){
-//    return i >= 97 && i <= 125;
-//}
-
-//bool isNumber(char i){
-//    return i >= 48 && i <= 57;
-//}
-
+Polynomial::Polynomial(Polynomial* polynomial){
+    Node* itr = polynomial->head;
+    while(itr != nullptr){
+        Node* node = new Node(itr);
+        Insert_head(node);
+        itr = itr->next;
+    }
+    sort();
+}
 
 Polynomial::Polynomial()
 {
@@ -221,6 +276,18 @@ std::string Polynomial::GetString(){
             if (node->bases_degrees[i]){
                 node_bases.emplace_back(char (97 + i), node->bases_degrees[i]);
             }
+        }
+        if(node_bases.empty()){
+            if(k > 0 && node != head){
+                res += '+';
+            }
+            if(k == int(k)) {
+                res += std::to_string(int(k));
+            } else {
+                res += std::to_string(k);
+            }
+            node = node->next;
+            continue;
         }
         if (k > 0 && node != head){
             res += '+';
