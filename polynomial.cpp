@@ -37,6 +37,7 @@ void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
     }
     while (second_list != nullptr){
         if(first_list == nullptr){
+            if(second_list->coefficient == 0) break;
             first_list = second_list;
             break;
         } else if (*first_list == *second_list){
@@ -96,27 +97,28 @@ void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
             first_list = tmp;
         }
     }
-//    Node* node = new_head;
-//    while(node != nullptr){
-//        if(node->coefficient == 0){
-//            if(node->next == nullptr && node->prev == nullptr) {
-//                node->bases_degrees.clear();
-//                node->bases_degrees.resize(26);
-//                break;
-//            }
-//            if (node->next != nullptr){
-//                node->next->prev = node->prev;
-//            }
-//            if (node->prev != nullptr){
-//                node->prev->next = node->next;
-//            }
-//            Node* tmp = node->next;
-//            delete node;
-//            node = tmp;
-//        } else {
-//            node = node->next;
-//        }
-//    }
+
+    Node* node = new_head;
+    while(node != nullptr){
+        if(node->coefficient == 0){
+            if(node->next == nullptr && node->prev == nullptr) {
+                node->bases_degrees.clear();
+                node->bases_degrees.resize(26);
+                break;
+            }
+            if (node->next != nullptr){
+                node->next->prev = node->prev;
+            }
+            if (node->prev != nullptr){
+                node->prev->next = node->next;
+            }
+            Node* tmp = node->next;
+            delete node;
+            node = tmp;
+        } else {
+            node = node->next;
+        }
+    }
 }
 
 void Polynomial::m_sort(Node*& head, int len){
@@ -162,15 +164,23 @@ void Polynomial::Convert(std::string str){
         substr +=  str[i];
         i++;
         while (i != int(str.length()) && str[i] != '+' && str[i] != '-'){
-            substr += str[i];
+            if(str[i] != ' '){
+                substr += str[i];
+            }
             i++;
-        }            Node* new_node = new Node;
+        }
+
+        Node* new_node = new Node;
         int j = 0;
         std::string coefficient_str;
         int coefficient = 1;
         while (j < int(substr.size())){
             if (substr[j] == '*') {
                 j++;
+                if(!coefficient_str.empty()){
+                    coefficient *= std::stoi(coefficient_str);
+                    coefficient_str.clear();
+                }
                 continue;
             }
             if (isLetter(substr[j])){
@@ -188,12 +198,21 @@ void Polynomial::Convert(std::string str){
                     new_node->Add_base_with_degree(base, 1);
                 } else {
                     j++;
+                    int d = 1;
                     std::string degree;
                     while (j != int(substr.size()) && !isLetter(substr[j]) && substr[j] != '*'){
+                        if(str[j] == '^'){
+                            d *= std::stoi(degree);
+                            degree.clear();
+                            j++;
+                            continue;
+                        }
                         degree += substr[j];
                         j++;
                     }
-                    new_node->Add_base_with_degree(base, std::stoi(degree));
+//                    new_node->Add_base_with_degree(base, std::stoi(degree));
+                    d *= std::stoi(degree);
+                    new_node->Add_base_with_degree(base, d);
                 }
             } else {
                 coefficient_str += substr[j];
@@ -201,7 +220,7 @@ void Polynomial::Convert(std::string str){
             }
         }
         if (!coefficient_str.empty()) {
-            coefficient = std::stoi(coefficient_str);
+            coefficient *= std::stoi(coefficient_str);
         }
         new_node->coefficient *= coefficient;
         Insert_head(new_node);

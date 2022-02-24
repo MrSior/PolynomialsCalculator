@@ -24,6 +24,8 @@ private slots:
 
     void on_findSumButton_clicked();
 
+    void on_findDerivativeButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
