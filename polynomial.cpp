@@ -20,9 +20,116 @@ void Polynomial::Get_mid(Node* head, int n, Node*& mid, Node*& prev){
 }
 
 void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
+//    Node* second_list = nullptr;
+//    Node* first_list = nullptr;
+//    if (*head1/*->Get_degree_of_base(base)*/ >= *head2/*->Get_degree_of_base(base)*/) {
+//        new_head = head1;
+//        first_list = head1;
+//        second_list = head2;
+//    } else {
+//        new_head = head2;
+//        first_list = head2;
+//        second_list = head1;
+//    }
+//    if(second_list->coefficient == 0){
+//        delete second_list;
+//        return;
+//    }
+//    while (second_list != nullptr){
+//        if(first_list == nullptr){
+//            if(second_list->coefficient == 0) break;
+//            first_list = second_list;
+//            break;
+//        } else if (*first_list == *second_list){
+//            first_list->coefficient += second_list->coefficient;
+//            if (second_list->next != nullptr){
+//                second_list->next->prev = second_list->prev;
+//            }
+//            if (second_list->prev != nullptr){
+//                second_list->prev->next = second_list->next;
+//            }
+//            Node* tmp = second_list->next;
+//            delete second_list;
+//            second_list = tmp;
+//        } else if(first_list->coefficient == 0){
+//            first_list->bases_degrees.clear();
+//            first_list->bases_degrees.resize(26);
+//            if(first_list->next != nullptr && first_list->prev != nullptr){
+//                if(first_list->prev != nullptr){
+//                    first_list->prev->next = first_list->next;
+//                }
+//                if (first_list->next != nullptr){
+//                    first_list->next->prev = first_list->prev;
+//                }
+//                auto tmp = first_list->next;
+//                delete first_list;
+//                first_list = tmp;
+//                continue;
+//            }
+//        } else if (first_list->next == nullptr) {
+//            first_list->next = second_list;
+//            second_list->prev = first_list;
+//            break;
+//        } else if (*first_list->next/*->Get_degree_of_base(base)*/ < *second_list/*->Get_degree_of_base(base)*/){
+//            Node* tmp = second_list->next;
+//            second_list->next = first_list->next;
+//            first_list->next->prev = second_list;
+//            first_list->next = second_list;
+//            second_list->prev = first_list;
+//            second_list = tmp;
+//            first_list = first_list->next;
+//        } else {
+//            first_list = first_list->next;
+//        }
+//    }
+//    if(first_list != nullptr && first_list->coefficient == 0){
+//        first_list->bases_degrees.clear();
+//        first_list->bases_degrees.resize(26);
+//        if(first_list->next != nullptr && first_list->prev != nullptr){
+//            if(first_list->prev != nullptr){
+//                first_list->prev->next = first_list->next;
+//            }
+//            if (first_list->next != nullptr){
+//                first_list->next->prev = first_list->prev;
+//            }
+//            auto tmp = first_list->next;
+//            delete first_list;
+//            first_list = tmp;
+//        }
+//    }
+
+//    Node* node = new_head;
+//    while(node != nullptr){
+//        if(node->coefficient == 0){
+//            if(node->next == nullptr && node->prev == nullptr) {
+//                node->bases_degrees.clear();
+//                node->bases_degrees.resize(26);
+//                break;
+//            }
+//            if (node->next != nullptr){
+//                node->next->prev = node->prev;
+//            }
+//            if (node->prev != nullptr){
+//                node->prev->next = node->next;
+//            }
+//            Node* tmp = node->next;
+//            delete node;
+//            node = tmp;
+//        } else {
+//            node = node->next;
+//        }
+//    }
+    if(head1 == nullptr){
+        new_head = head2;
+        return;
+    }
+    if(head2 == nullptr){
+        new_head = head1;
+        return;
+    }
     Node* second_list = nullptr;
     Node* first_list = nullptr;
-    if (*head1/*->Get_degree_of_base(base)*/ >= *head2/*->Get_degree_of_base(base)*/) {
+    if (*head1 >= *head2) {
         new_head = head1;
         first_list = head1;
         second_list = head2;
@@ -31,46 +138,48 @@ void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
         first_list = head2;
         second_list = head1;
     }
-    if(second_list->coefficient == 0){
-        delete second_list;
-        return;
-    }
     while (second_list != nullptr){
         if(first_list == nullptr){
-            if(second_list->coefficient == 0) break;
             first_list = second_list;
             break;
-        } else if (*first_list == *second_list){
-            first_list->coefficient += second_list->coefficient;
-            if (second_list->next != nullptr){
-                second_list->next->prev = second_list->prev;
-            }
-            if (second_list->prev != nullptr){
-                second_list->prev->next = second_list->next;
-            }
-            Node* tmp = second_list->next;
-            delete second_list;
-            second_list = tmp;
-        } else if(first_list->coefficient == 0){
-            first_list->bases_degrees.clear();
-            first_list->bases_degrees.resize(26);
-            if(first_list->next != nullptr && first_list->prev != nullptr){
-                if(first_list->prev != nullptr){
-                    first_list->prev->next = first_list->next;
+        }
+        if (*first_list == *second_list){
+            if(first_list->coefficient + second_list->coefficient == 0){
+                auto tmp = second_list->next;
+                if(second_list->next != nullptr){
+                    second_list->next->prev = nullptr;
                 }
-                if (first_list->next != nullptr){
+                delete second_list;
+                second_list = tmp;
+
+                auto tmp1 = first_list->next;
+                if(first_list->next != nullptr){
                     first_list->next->prev = first_list->prev;
                 }
-                auto tmp = first_list->next;
+                if(first_list->prev != nullptr){
+                    first_list->prev->next = first_list->next;
+                } else {
+                    new_head = tmp1;
+                }
                 delete first_list;
-                first_list = tmp;
-                continue;
+                first_list = tmp1;
+            } else {
+                first_list->coefficient += second_list->coefficient;
+                auto tmp = second_list->next;
+                if(second_list->next != nullptr){
+                    second_list->next->prev = second_list->prev;
+                }
+                if(second_list->prev != nullptr){
+                    second_list->prev->next = second_list->next;
+                }
+                delete second_list;
+                second_list = tmp;
             }
         } else if (first_list->next == nullptr) {
             first_list->next = second_list;
             second_list->prev = first_list;
             break;
-        } else if (*first_list->next/*->Get_degree_of_base(base)*/ < *second_list/*->Get_degree_of_base(base)*/){
+        } else if (*first_list->next< *second_list){
             Node* tmp = second_list->next;
             second_list->next = first_list->next;
             first_list->next->prev = second_list;
@@ -80,43 +189,6 @@ void Polynomial::Merge(Node* head1, Node* head2, Node*& new_head){
             first_list = first_list->next;
         } else {
             first_list = first_list->next;
-        }
-    }
-    if(first_list != nullptr && first_list->coefficient == 0){
-        first_list->bases_degrees.clear();
-        first_list->bases_degrees.resize(26);
-        if(first_list->next != nullptr && first_list->prev != nullptr){
-            if(first_list->prev != nullptr){
-                first_list->prev->next = first_list->next;
-            }
-            if (first_list->next != nullptr){
-                first_list->next->prev = first_list->prev;
-            }
-            auto tmp = first_list->next;
-            delete first_list;
-            first_list = tmp;
-        }
-    }
-
-    Node* node = new_head;
-    while(node != nullptr){
-        if(node->coefficient == 0){
-            if(node->next == nullptr && node->prev == nullptr) {
-                node->bases_degrees.clear();
-                node->bases_degrees.resize(26);
-                break;
-            }
-            if (node->next != nullptr){
-                node->next->prev = node->prev;
-            }
-            if (node->prev != nullptr){
-                node->prev->next = node->next;
-            }
-            Node* tmp = node->next;
-            delete node;
-            node = tmp;
-        } else {
-            node = node->next;
         }
     }
 }
