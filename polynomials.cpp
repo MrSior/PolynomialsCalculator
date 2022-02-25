@@ -83,23 +83,37 @@ void Polynomials::CheckString(std::string str){
             }
         } else {
             if(spaces.first == -1 || spaces.second == -1) continue;
-            if(spaces.first >= 0 && spaces.second <= str.size()){
-                if(str[spaces.first] == '*' && str[spaces.second] == '*'){
-                    throw std::invalid_argument("missed factor");
-                }
-                if((str[spaces.first] == '-' && str[spaces.second] == '-') ||
-                   (str[spaces.first] == '+' && str[spaces.second] == '+')){
-                    throw std::invalid_argument("missed summand");
-                }
-                if(!isSign(str[spaces.first]) && !isSign(str[spaces.second])){
-                    throw std::invalid_argument("missed sign");
-                } else if(isSign(str[spaces.first]) && isSign(str[spaces.second])){
-                    throw std::invalid_argument("two signes near");
+            if(spaces.first >= 0 && spaces.second < str.size()){
+                if(str[spaces.first] == ' '){
+                    if(str[spaces.second] == '*' || str[spaces.second] == '^'){
+                        throw std::invalid_argument("incorrect sign");
+                    }
+                } else {
+                    if(str[spaces.first] == '*' && str[spaces.second] == '*'){
+                        throw std::invalid_argument("missed factor");
+                    }
+                    if((str[spaces.first] == '-' && str[spaces.second] == '-') ||
+                       (str[spaces.first] == '+' && str[spaces.second] == '+')){
+                        throw std::invalid_argument("missed summand");
+                    }
+                    if(!isSign(str[spaces.first]) && !isSign(str[spaces.second])){
+                        throw std::invalid_argument("missed sign");
+                    } else if(isSign(str[spaces.first]) && isSign(str[spaces.second])){
+                        throw std::invalid_argument("two signes near");
+                    }
                 }
             }
             //str.erase(spaces.first + 1, spaces.second - spaces.first - 2);
             spaces.first = -1;
             spaces.second = -1;
+        }
+    }
+    if(spaces.first != -1){
+        if(!isNumber(str[spaces.first]) && !isLetter(str[spaces.first])) {
+            if(str[spaces.first] == ' '){
+                throw std::invalid_argument("empty input");
+            }
+            throw std::invalid_argument("extra sign");
         }
     }
     if (str.empty()){

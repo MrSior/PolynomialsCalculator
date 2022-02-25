@@ -233,13 +233,18 @@ void Polynomial::Convert(std::string str){
     int i = 0;
     while (i != int(str.length())){
         std::string substr;
-        substr +=  str[i];
+        if(str[i] != ' '){
+            substr +=  str[i];
+        }
         i++;
         while (i != int(str.length()) && str[i] != '+' && str[i] != '-'){
             if(str[i] != ' '){
                 substr += str[i];
             }
             i++;
+        }
+        if(substr.empty()){
+            continue;
         }
 
         Node* new_node = new Node;
@@ -295,6 +300,10 @@ void Polynomial::Convert(std::string str){
             coefficient *= std::stoi(coefficient_str);
         }
         new_node->coefficient *= coefficient;
+        if(new_node->coefficient == 0){
+            delete new_node;
+            continue;
+        }
         Insert_head(new_node);
     }
     sort();
