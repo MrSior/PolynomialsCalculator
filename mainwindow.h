@@ -26,6 +26,8 @@ private slots:
 
     void on_findDerivativeButton_clicked();
 
+    void on_findMultiplicationButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

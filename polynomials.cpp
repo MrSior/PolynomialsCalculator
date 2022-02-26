@@ -50,6 +50,28 @@ Polynomial* Polynomials::FindDerivative(PolynomialsNode* polynomials_node, char 
     return polynomial;
 }
 
+Polynomial* Polynomials::MultiplicationPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node){
+    //Polynomial* first_polynomial = new Polynomial;
+    Node* itr = first_polynomials_node->polynomial->head;
+    Node* itr1 = second_polynomials_node->polynomial->head;
+    auto* res_polynomial = new Polynomial();
+    while (itr != nullptr) {
+        while (itr1 != nullptr) {
+            Node* new_node = new Node();
+            new_node->coefficient = itr->coefficient * itr1->coefficient;
+            for(int i = 0; i < new_node->bases_degrees.size(); ++i){
+                new_node->bases_degrees[i] = itr->bases_degrees[i] + itr1->bases_degrees[i];
+            }
+            res_polynomial->Insert_head(new_node);
+            itr1 = itr1->next;
+        }
+        itr1 = second_polynomials_node->polynomial->head;
+        itr = itr->next;
+    }
+    res_polynomial->sort();
+    return res_polynomial;
+}
+
 void Polynomials::CheckString(std::string str){
     for(auto i : str){
         if (!isSign(i) && !isLetter(i) && !isNumber(i) && i != ' '){
@@ -103,7 +125,6 @@ void Polynomials::CheckString(std::string str){
                     }
                 }
             }
-            //str.erase(spaces.first + 1, spaces.second - spaces.first - 2);
             spaces.first = -1;
             spaces.second = -1;
         }

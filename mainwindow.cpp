@@ -18,6 +18,11 @@ MainWindow::MainWindow(QWidget *parent)
                                    "border-width: 1px;"
                                    "border-color: black; "
                                    "}");
+    ui->multiplicationResLabel->setStyleSheet("QLabel {"
+                                              "border-style: solid;"
+                                              "border-width: 1px;"
+                                              "border-color: black; "
+                                              "}");
     ChangeList();
 }
 
@@ -43,6 +48,8 @@ void MainWindow::ChangeList(){
     ui->spinBox_2->setMaximum(max);
     ui->derivativePolynomialSpinBox->setMaximum(max);
     ui->derivativeOrderSpinBox->setMinimum(1);
+    ui->multiplicationSpinBox1->setMaximum(max);
+    ui->multiplicationSpinBox2->setMaximum(max);
 }
 
 void MainWindow::on_AddPolynomialButton_clicked()
@@ -86,6 +93,20 @@ void MainWindow::on_findDerivativeButton_clicked()
     ui->derivativeResLabel->setText(QString::fromStdString(res->GetString()));
     if(ui->addDerivativeRadioButton->isChecked()){
         PolynomialsNode* node = new PolynomialsNode(res);
+        polynomials.InsertHead(node);
+        ChangeList();
+    }
+}
+
+
+void MainWindow::on_findMultiplicationButton_clicked()
+{
+    if(ui->listWidget->count() == 0) return;
+    auto i = polynomials.MultiplicationPolynomials(polynomials.Get_element(ui->multiplicationSpinBox1->value()),
+                                                   polynomials.Get_element(ui->multiplicationSpinBox2->value()));
+    ui->multiplicationResLabel->setText(QString::fromStdString(i->GetString()));
+    if(ui->multiplicationRadioButton->isChecked()){
+        PolynomialsNode* node = new PolynomialsNode(i);
         polynomials.InsertHead(node);
         ChangeList();
     }
