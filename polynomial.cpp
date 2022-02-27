@@ -418,3 +418,17 @@ std::string Polynomial::GetString(){
     }
     return res;
 }
+
+void Polynomial::Count_bases(){
+    Node* itr = head;
+    while(itr != nullptr){
+        for(int i = 0; i < itr->bases_degrees.size(); ++i){
+            if(itr->bases_degrees[i] != 0){
+                bases[i] = 1;
+            } else {
+                bases[i] = 0;
+            }
+        }
+        itr = itr->next;
+    }
+}

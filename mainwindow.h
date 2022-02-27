@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "QListWidget"
 #include "polynomials.h"
 
 QT_BEGIN_NAMESPACE
@@ -16,6 +17,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    std::map<char, double> map;
+    int chosenPolunomial;
+    bool isValueSet;
+
     void ChangeList();
     Polynomials polynomials;
 
@@ -27,6 +32,10 @@ private slots:
     void on_findDerivativeButton_clicked();
 
     void on_findMultiplicationButton_clicked();
+
+    void on_pushButton_clicked();
+
+    void on_countValuePushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

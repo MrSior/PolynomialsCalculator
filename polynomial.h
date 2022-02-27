@@ -23,6 +23,7 @@ public:
     void Merge(Node* head1, Node* head2, Node*& new_head);
     void Get_mid(Node* head, int n, Node*& mid, Node*& prev);
     int Get_length(Node* head);
+    void Count_bases();
     std::string  GetString();
 };
 

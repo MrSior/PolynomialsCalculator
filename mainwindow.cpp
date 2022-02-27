@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include "QMessageBox"
 #include "QDebug"
+#include "QHBoxLayout"
+#include "form.h"
+#include "map"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -23,7 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
                                               "border-width: 1px;"
                                               "border-color: black; "
                                               "}");
+    ui->countValueLabel->setStyleSheet("QLabel {"
+                                       "border-style: solid;"
+                                       "border-width: 1px;"
+                                       "border-color: black; "
+                                       "}");
     ChangeList();
+    isValueSet = false;
 }
 
 MainWindow::~MainWindow()
@@ -50,6 +59,7 @@ void MainWindow::ChangeList(){
     ui->derivativeOrderSpinBox->setMinimum(1);
     ui->multiplicationSpinBox1->setMaximum(max);
     ui->multiplicationSpinBox2->setMaximum(max);
+    ui->countValueSpinBox->setMaximum(max);
 }
 
 void MainWindow::on_AddPolynomialButton_clicked()
@@ -110,5 +120,39 @@ void MainWindow::on_findMultiplicationButton_clicked()
         polynomials.InsertHead(node);
         ChangeList();
     }
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    if(ui->listWidget->count() == 0) return;
+    chosenPolunomial = ui->countValueSpinBox->value();
+    map.clear();
+    Form* form = new Form(polynomials.Get_element(chosenPolunomial)->polynomial, &map);
+    form->setWindowTitle("form");
+    form->show();
+    isValueSet = true;
+}
+
+
+void MainWindow::on_countValuePushButton_clicked()
+{
+    if(ui->listWidget->count() == 0) return;
+    if(!isValueSet) return;
+    Node* node = polynomials.Get_element(chosenPolunomial)->polynomial->head;
+    double sum = 0;
+    while(node != nullptr){
+        double value = 1;
+        for(int i = 0; i < node->bases_degrees.size(); ++i){
+            if(node->bases_degrees[i] != 0){
+                value *= std::pow(map['a' + i], node->bases_degrees[i]);
+            }
+        }
+        value *= node->coefficient;
+        sum += value;
+        node = node->next;
+    }
+
+    ui->countValueLabel->setText(QString::fromStdString(std::to_string(sum)));
 }
 
