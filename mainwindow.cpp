@@ -31,6 +31,11 @@ MainWindow::MainWindow(QWidget *parent)
                                        "border-width: 1px;"
                                        "border-color: black; "
                                        "}");
+    ui->solutionResLabel->setStyleSheet("QLabel {"
+                                        "border-style: solid;"
+                                        "border-width: 1px;"
+                                        "border-color: black; "
+                                        "}");
     ChangeList();
     isValueSet = false;
 }
@@ -60,6 +65,8 @@ void MainWindow::ChangeList(){
     ui->multiplicationSpinBox1->setMaximum(max);
     ui->multiplicationSpinBox2->setMaximum(max);
     ui->countValueSpinBox->setMaximum(max);
+    ui->eraseSpinBox->setMaximum(max);
+    ui->solutionSpinBox->setMaximum(max);
 }
 
 void MainWindow::on_AddPolynomialButton_clicked()
@@ -94,7 +101,7 @@ void MainWindow::on_findSumButton_clicked()
 void MainWindow::on_findDerivativeButton_clicked()
 {
     if(ui->listWidget->count() == 0) return;
-    if(ui->variableLineEdit->text().size() < 1 && ui->variableLineEdit->text().size() > 1) return;
+    if(ui->variableLineEdit->text().toStdString().size() < 1 && ui->variableLineEdit->text().toStdString().size() > 1) return;
     if(!isLetter(ui->variableLineEdit->text().toStdString()[0])) return;
     char base = ui->variableLineEdit->text().toStdString()[0];
     int order = ui->derivativeOrderSpinBox->value();
@@ -126,12 +133,12 @@ void MainWindow::on_findMultiplicationButton_clicked()
 void MainWindow::on_pushButton_clicked()
 {
     if(ui->listWidget->count() == 0) return;
+    isValueSet = false;
     chosenPolunomial = ui->countValueSpinBox->value();
     map.clear();
-    Form* form = new Form(polynomials.Get_element(chosenPolunomial)->polynomial, &map);
+    Form* form = new Form(polynomials.Get_element(chosenPolunomial)->polynomial, &map, &isValueSet);
     form->setWindowTitle("form");
     form->show();
-    isValueSet = true;
 }
 
 
@@ -154,5 +161,50 @@ void MainWindow::on_countValuePushButton_clicked()
     }
 
     ui->countValueLabel->setText(QString::fromStdString(std::to_string(sum)));
+}
+
+
+void MainWindow::on_erasePushButton_clicked()
+{
+    if(ui->listWidget->count() == 0) return;
+    int ind = ui->eraseSpinBox->value();
+    polynomials.Erase_node(ind);
+    ChangeList();
+}
+
+
+void MainWindow::on_solutionPushButton_clicked()
+{
+    ui->solutionResLabel->clear();
+    if(ui->listWidget->count() == 0) return;
+    auto i = polynomials.Get_element(ui->solutionSpinBox->value())->polynomial;
+    int offset = 0;
+    int coefficent;
+    try {
+        coefficent = i->Get_free_node(offset);
+    }  catch (std::invalid_argument error) {
+        QMessageBox::critical(this, "Incorrect input", error.what());
+        return;
+    }
+    std::vector<int> solutions;
+    if(offset != 0){
+        solutions.push_back(0);
+    }
+    for(int divider = -std::abs(coefficent); divider <= std::abs(coefficent); ++divider){
+        if (divider != 0 && coefficent % divider == 0){
+            if(i->Count_value(divider, offset) == 0){
+                solutions.push_back(divider);
+            }
+        }
+    }
+    std::string str = "{";
+    for(auto solution : solutions){
+        str += " " + std::to_string(solution) + ";";
+    }
+    if(str.size() > 1){
+        str.pop_back();
+    }
+    str += " }";
+    ui->solutionResLabel->setText(QString::fromStdString(str));
 }
 

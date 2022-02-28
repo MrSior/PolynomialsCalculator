@@ -24,6 +24,8 @@ public:
     void Get_mid(Node* head, int n, Node*& mid, Node*& prev);
     int Get_length(Node* head);
     void Count_bases();
+    int Get_free_node(int& offset);
+    int Count_value(int value, int offset);
     std::string  GetString();
 };
 

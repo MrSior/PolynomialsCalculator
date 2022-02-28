@@ -6,9 +6,10 @@
 #include "QDebug"
 #include "QMessageBox"
 
-Form::Form(Polynomial* polynomial, std::map<char, double>* _map, QWidget *parent) : QWidget(parent)
+Form::Form(Polynomial* polynomial, std::map<char, double>* _map, bool* _isFilled, QWidget *parent) : QWidget(parent)
 {
     map = _map;
+    isFilled = _isFilled;
     QFormLayout* formLayout = new QFormLayout;
     formLayout->setLabelAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
@@ -46,7 +47,9 @@ void Form::setButtonClicked(){
             map->insert(std::make_pair(i.first, val));
         }
         this->close();
+        *isFilled = true;
     }  catch (...) {
+        map->clear();
         QMessageBox::critical(this, "Incorrect input", "Incorrect input");
     }
 }

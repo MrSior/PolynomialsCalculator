@@ -37,6 +37,10 @@ private slots:
 
     void on_countValuePushButton_clicked();
 
+    void on_erasePushButton_clicked();
+
+    void on_solutionPushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

@@ -16,8 +16,9 @@ class Form  : public QWidget
 public:
     std::map<char, double>* map = nullptr;
     std::vector<std::pair<char, QLineEdit*>> lines;
+    bool* isFilled;
 
-    Form(Polynomial* polynomial, std::map<char, double>* _map, QWidget *parent = 0);
+    Form(Polynomial* polynomial, std::map<char, double>* _map, bool* _isFilled, QWidget *parent = 0);
     ~Form() {};
 private slots:
     void setButtonClicked();

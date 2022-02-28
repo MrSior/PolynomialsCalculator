@@ -1,5 +1,6 @@
 #include "polynomial.h"
 #include "string"
+#include "cmath"
 
 int Polynomial::Get_length(Node* head){
     int cnt = 0;
@@ -421,14 +422,60 @@ std::string Polynomial::GetString(){
 
 void Polynomial::Count_bases(){
     Node* itr = head;
+    bases.clear();
+    bases.resize(26);
     while(itr != nullptr){
         for(int i = 0; i < itr->bases_degrees.size(); ++i){
             if(itr->bases_degrees[i] != 0){
                 bases[i] = 1;
-            } else {
-                bases[i] = 0;
             }
         }
         itr = itr->next;
     }
+}
+
+int Polynomial::Get_free_node(int& offset){
+    Count_bases();
+    int sum = 0;
+    for(auto i : bases){
+        sum += i;
+    }
+    if(sum > 1){
+        throw std::invalid_argument("more than 1 variable");
+    }
+
+    int res = 0;
+    Node* itr = head;
+    while (itr != nullptr) {
+        if(std::abs(itr->coefficient - int(itr->coefficient)) > 0.001){
+            throw std::invalid_argument("not integer coefficient");
+        }
+        if(itr->next == nullptr){
+            res = int(itr->coefficient);
+            for(auto i : itr->bases_degrees){
+                if(i >= 1){
+                    offset = i;
+                }
+            }
+        }
+        itr = itr->next;
+    }
+    return res;
+}
+
+int Polynomial::Count_value(int value, int offset){
+    int sum = 0;
+    Node* itr = head;
+    while(itr != nullptr){
+        int m = 1;
+        for(auto i : itr->bases_degrees){
+            if(i != 0){
+                m *= std::pow(value, i - offset);
+            }
+        }
+        m *= itr->coefficient;
+        sum += m;
+        itr = itr->next;
+    }
+    return sum;
 }

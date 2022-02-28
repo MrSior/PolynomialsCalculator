@@ -209,3 +209,18 @@ PolynomialsNode* Polynomials::Get_element(int i){
     }
     return node;
 }
+
+void Polynomials::Del_elem(PolynomialsNode*& node, int i){
+    if(node == nullptr) return;
+    if(i--){
+        Del_elem(node->next, i);
+        return;
+    }
+    PolynomialsNode* q = node;
+    node = q->next;
+    delete q;
+}
+
+void Polynomials::Erase_node(int i){
+    Del_elem(head, i);
+}
