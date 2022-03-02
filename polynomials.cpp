@@ -10,6 +10,21 @@ void Polynomials::InsertHead(PolynomialsNode* polynomials_node){
     head = polynomials_node;
 }
 
+void Polynomials::Insert_back(PolynomialsNode* polynomials_node){
+    if(head == nullptr) {
+        head = polynomials_node;
+        return;
+    }
+    PolynomialsNode* node = head;
+    while(node != nullptr){
+        if(node->next == nullptr){
+            node->next = polynomials_node;
+            return;
+        }
+        node = node->next;
+    }
+}
+
 Polynomial* Polynomials::SumPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node){
     //auto* polynomials_node = new PolynomialsNode;
     Polynomial* first_polynomial = new Polynomial(first_polynomials_node->polynomial);
@@ -73,15 +88,18 @@ Polynomial* Polynomials::MultiplicationPolynomials(PolynomialsNode* first_polyno
 }
 
 void Polynomials::CheckString(std::string str){
-    for(auto i : str){
-        if (!isSign(i) && !isLetter(i) && !isNumber(i) && i != ' '){
-            throw std::invalid_argument("inncorect symbols");
-        }
-    }
+//    for(auto i : str){
+//        if (!isSign(i) && !isLetter(i) && !isNumber(i) && i != ' '){
+//            throw std::invalid_argument("inncorect symbols");
+//        }
+//    }
     std::pair<int, int> spaces;
     spaces.first = -1;
     spaces.second = -1;
     for(int i = 0; i < str.size(); ++i){
+        if (!isSign(str[i]) && !isLetter(str[i]) && !isNumber(str[i]) && i != ' '){
+            throw std::invalid_argument("inncorect symbols");
+        }
         if(i + 1 < str.size() && str[i] == '^' && !isNumber(str[i + 1])){
             throw std::invalid_argument("missed degree");
         }

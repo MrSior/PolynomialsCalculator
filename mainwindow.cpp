@@ -5,6 +5,8 @@
 #include "QHBoxLayout"
 #include "form.h"
 #include "map"
+#include "QFileDialog"
+#include "fstream"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -36,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
                                         "border-width: 1px;"
                                         "border-color: black; "
                                         "}");
+    polynomials = new Polynomials();
     ChangeList();
     isValueSet = false;
 }
@@ -47,7 +50,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::ChangeList(){
     ui->listWidget->clear();
-    PolynomialsNode* node = polynomials.head;
+    PolynomialsNode* node = polynomials->head;
     int cnt = 0;
     while (node != nullptr) {
         std::string str = std::to_string(cnt) + ") ";
@@ -72,11 +75,11 @@ void MainWindow::ChangeList(){
 void MainWindow::on_AddPolynomialButton_clicked()
 {
     try {
-        polynomials.CheckString(ui->lineEdit->text().toStdString());
+        polynomials->CheckString(ui->lineEdit->text().toStdString());
         Polynomial* polynomial = new Polynomial;
         polynomial->Convert(ui->lineEdit->text().toStdString());
         PolynomialsNode* polynomialsNode = new PolynomialsNode(polynomial);
-        polynomials.InsertHead(polynomialsNode);
+        polynomials->Insert_back(polynomialsNode);
         ui->lineEdit->clear();
         ChangeList();
     }  catch (std::invalid_argument error) {
@@ -88,11 +91,11 @@ void MainWindow::on_AddPolynomialButton_clicked()
 void MainWindow::on_findSumButton_clicked()
 {
     if(ui->listWidget->count() == 0) return;
-    auto i = polynomials.SumPolynomials(polynomials.Get_element(ui->spinBox->value()), polynomials.Get_element(ui->spinBox_2->value()));
+    auto i = polynomials->SumPolynomials(polynomials->Get_element(ui->spinBox->value()), polynomials->Get_element(ui->spinBox_2->value()));
     ui->sumResLabel->setText(QString::fromStdString(i->GetString()));
     if(ui->addSumRadioButton->isChecked()){
         PolynomialsNode* node = new PolynomialsNode(i);
-        polynomials.InsertHead(node);
+        polynomials->Insert_back(node);
         ChangeList();
     }
 }
@@ -100,17 +103,18 @@ void MainWindow::on_findSumButton_clicked()
 
 void MainWindow::on_findDerivativeButton_clicked()
 {
+    if(ui->derivativeOrderSpinBox->value() == 0) return;
     if(ui->listWidget->count() == 0) return;
     if(ui->variableLineEdit->text().toStdString().size() < 1 && ui->variableLineEdit->text().toStdString().size() > 1) return;
     if(!isLetter(ui->variableLineEdit->text().toStdString()[0])) return;
     char base = ui->variableLineEdit->text().toStdString()[0];
     int order = ui->derivativeOrderSpinBox->value();
     if(order < 1) return;
-    auto res = polynomials.FindDerivative(polynomials.Get_element(ui->derivativePolynomialSpinBox->value()), base, order);
+    auto res = polynomials->FindDerivative(polynomials->Get_element(ui->derivativePolynomialSpinBox->value()), base, order);
     ui->derivativeResLabel->setText(QString::fromStdString(res->GetString()));
     if(ui->addDerivativeRadioButton->isChecked()){
         PolynomialsNode* node = new PolynomialsNode(res);
-        polynomials.InsertHead(node);
+        polynomials->Insert_back(node);
         ChangeList();
     }
 }
@@ -119,12 +123,12 @@ void MainWindow::on_findDerivativeButton_clicked()
 void MainWindow::on_findMultiplicationButton_clicked()
 {
     if(ui->listWidget->count() == 0) return;
-    auto i = polynomials.MultiplicationPolynomials(polynomials.Get_element(ui->multiplicationSpinBox1->value()),
-                                                   polynomials.Get_element(ui->multiplicationSpinBox2->value()));
+    auto i = polynomials->MultiplicationPolynomials(polynomials->Get_element(ui->multiplicationSpinBox1->value()),
+                                                   polynomials->Get_element(ui->multiplicationSpinBox2->value()));
     ui->multiplicationResLabel->setText(QString::fromStdString(i->GetString()));
     if(ui->multiplicationRadioButton->isChecked()){
         PolynomialsNode* node = new PolynomialsNode(i);
-        polynomials.InsertHead(node);
+        polynomials->Insert_back(node);
         ChangeList();
     }
 }
@@ -136,7 +140,7 @@ void MainWindow::on_pushButton_clicked()
     isValueSet = false;
     chosenPolunomial = ui->countValueSpinBox->value();
     map.clear();
-    Form* form = new Form(polynomials.Get_element(chosenPolunomial)->polynomial, &map, &isValueSet);
+    Form* form = new Form(polynomials->Get_element(chosenPolunomial)->polynomial, &map, &isValueSet);
     form->setWindowTitle("form");
     form->show();
 }
@@ -146,7 +150,7 @@ void MainWindow::on_countValuePushButton_clicked()
 {
     if(ui->listWidget->count() == 0) return;
     if(!isValueSet) return;
-    Node* node = polynomials.Get_element(chosenPolunomial)->polynomial->head;
+    Node* node = polynomials->Get_element(chosenPolunomial)->polynomial->head;
     double sum = 0;
     while(node != nullptr){
         double value = 1;
@@ -168,7 +172,7 @@ void MainWindow::on_erasePushButton_clicked()
 {
     if(ui->listWidget->count() == 0) return;
     int ind = ui->eraseSpinBox->value();
-    polynomials.Erase_node(ind);
+    polynomials->Erase_node(ind);
     ChangeList();
 }
 
@@ -177,7 +181,7 @@ void MainWindow::on_solutionPushButton_clicked()
 {
     ui->solutionResLabel->clear();
     if(ui->listWidget->count() == 0) return;
-    auto i = polynomials.Get_element(ui->solutionSpinBox->value())->polynomial;
+    auto i = polynomials->Get_element(ui->solutionSpinBox->value())->polynomial;
     int offset = 0;
     int coefficent;
     try {
@@ -208,3 +212,59 @@ void MainWindow::on_solutionPushButton_clicked()
     ui->solutionResLabel->setText(QString::fromStdString(str));
 }
 
+
+void MainWindow::on_savePushButton_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,
+             tr("Save Address Book"), "",
+             tr("Address Book (*.txt);;All Files (*)"));
+    if (fileName.isEmpty()){
+             return;
+    }
+    else {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+            return;
+        }
+        QTextStream out(&file);
+        PolynomialsNode* node = polynomials->head;
+        while(node != nullptr){
+            out << QString::fromStdString(node->polynomial->GetString() + '\n');
+            node = node->next;
+        }
+     }
+}
+
+
+void MainWindow::on_loadPushButton_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+             tr("Open Address Book"), "",
+             tr("Address Book (*.txt);;All Files (*)"));
+    if (fileName.isEmpty())
+        return;
+    else {
+        QFile file(fileName);
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::information(this, tr("Unable to open file"),
+                file.errorString());
+            return;
+        }
+
+        QTextStream in(&file);
+        delete polynomials;
+        polynomials = new Polynomials();
+        while(!in.atEnd()){
+            QString str;
+            str = in.readLine();
+            Polynomial* new_polynomial = new Polynomial();
+            new_polynomial->Convert(str.toStdString());
+            PolynomialsNode* new_polynomials_node = new PolynomialsNode(new_polynomial);
+            polynomials->Insert_back(new_polynomials_node);
+        }
+        file.close();
+        ChangeList();
+    }
+}

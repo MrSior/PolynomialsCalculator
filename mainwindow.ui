@@ -761,6 +761,42 @@
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="savePushButton">
+    <property name="geometry">
+     <rect>
+      <x>19</x>
+      <y>603</y>
+      <width>91</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>save</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="loadPushButton">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>603</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>load</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

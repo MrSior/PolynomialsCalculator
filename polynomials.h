@@ -13,6 +13,7 @@ public:
     Polynomials();
 
     void InsertHead(PolynomialsNode* polynomials_node);
+    void Insert_back(PolynomialsNode* polynomials_node);
 
     Polynomial* SumPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node);
     Polynomial* FindDerivative(PolynomialsNode* polynomials_node, char base, int order);

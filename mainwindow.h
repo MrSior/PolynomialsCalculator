@@ -22,7 +22,7 @@ public:
     bool isValueSet;
 
     void ChangeList();
-    Polynomials polynomials;
+    Polynomials* polynomials;
 
 private slots:
     void on_AddPolynomialButton_clicked();
@@ -40,6 +40,10 @@ private slots:
     void on_erasePushButton_clicked();
 
     void on_solutionPushButton_clicked();
+
+    void on_savePushButton_clicked();
+
+    void on_loadPushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
