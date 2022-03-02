@@ -45,6 +45,8 @@ private slots:
 
     void on_loadPushButton_clicked();
 
+    void on_findDivisionPushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

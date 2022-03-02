@@ -87,6 +87,43 @@ Polynomial* Polynomials::MultiplicationPolynomials(PolynomialsNode* first_polyno
     return res_polynomial;
 }
 
+std::pair<Polynomial*, Polynomial*> Polynomials::DivisionPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node){
+    int base = 0;
+    for(int i = 0; i < first_polynomials_node->polynomial->head->bases_degrees.size(); ++i){
+        if(first_polynomials_node->polynomial->head->bases_degrees[i] != 0){
+            base = i;
+        }
+    }
+    Polynomial* first_polynomial = new Polynomial(first_polynomials_node->polynomial);
+    Polynomial* second_polynomial = new Polynomial(second_polynomials_node->polynomial);
+    auto* res_polynomial = new Polynomial();
+    Node* itr = first_polynomial->head;
+    Node* itr1 = second_polynomial->head;
+    while(first_polynomial->head->bases_degrees[base] >= second_polynomial->head->bases_degrees[base]){
+        Polynomial* polynomial_del = new Polynomial();
+        Node* node = new Node();
+        node->coefficient = second_polynomial->head->coefficient / first_polynomial->head->coefficient;
+        node->bases_degrees[base] = first_polynomial->head->bases_degrees[base] - second_polynomial->head->bases_degrees[base];
+
+        polynomial_del->Insert_head(node);
+
+        Polynomial* polynomial_deducted = new Polynomial();
+        PolynomialsNode* node_del = new PolynomialsNode(polynomial_del);
+        polynomial_deducted = MultiplicationPolynomials(second_polynomials_node, node_del);
+        Node* h = polynomial_deducted->head;
+        while(h != nullptr){
+            h->coefficient *= -1;
+            h = h->next;
+        }
+        PolynomialsNode* pn1 = new PolynomialsNode(first_polynomial);
+        PolynomialsNode* pn2 = new PolynomialsNode(polynomial_deducted);
+        first_polynomial = SumPolynomials(pn1, pn2);
+        res_polynomial->Insert_head(node);
+    }
+    res_polynomial->sort();
+    return std::make_pair(res_polynomial, first_polynomial);
+}
+
 void Polynomials::CheckString(std::string str){
 //    for(auto i : str){
 //        if (!isSign(i) && !isLetter(i) && !isNumber(i) && i != ' '){

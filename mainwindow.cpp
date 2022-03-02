@@ -38,6 +38,16 @@ MainWindow::MainWindow(QWidget *parent)
                                         "border-width: 1px;"
                                         "border-color: black; "
                                         "}");
+    ui->remainderLabel->setStyleSheet("QLabel {"
+                                      "border-style: solid;"
+                                      "border-width: 1px;"
+                                      "border-color: black; "
+                                      "}");
+    ui->partialLabel->setStyleSheet("QLabel {"
+                                    "border-style: solid;"
+                                    "border-width: 1px;"
+                                    "border-color: black; "
+                                    "}");
     polynomials = new Polynomials();
     ChangeList();
     isValueSet = false;
@@ -70,6 +80,8 @@ void MainWindow::ChangeList(){
     ui->countValueSpinBox->setMaximum(max);
     ui->eraseSpinBox->setMaximum(max);
     ui->solutionSpinBox->setMaximum(max);
+    ui->divisionFirstSpinBox->setMaximum(max);
+    ui->divisionSecondSpinBox->setMaximum(max);
 }
 
 void MainWindow::on_AddPolynomialButton_clicked()
@@ -93,7 +105,7 @@ void MainWindow::on_findSumButton_clicked()
     if(ui->listWidget->count() == 0) return;
     auto i = polynomials->SumPolynomials(polynomials->Get_element(ui->spinBox->value()), polynomials->Get_element(ui->spinBox_2->value()));
     ui->sumResLabel->setText(QString::fromStdString(i->GetString()));
-    if(ui->addSumRadioButton->isChecked()){
+    if(ui->addSumCheckBox->isChecked()){
         PolynomialsNode* node = new PolynomialsNode(i);
         polynomials->Insert_back(node);
         ChangeList();
@@ -112,7 +124,7 @@ void MainWindow::on_findDerivativeButton_clicked()
     if(order < 1) return;
     auto res = polynomials->FindDerivative(polynomials->Get_element(ui->derivativePolynomialSpinBox->value()), base, order);
     ui->derivativeResLabel->setText(QString::fromStdString(res->GetString()));
-    if(ui->addDerivativeRadioButton->isChecked()){
+    if(ui->addDerivativeCheckBox->isChecked()){
         PolynomialsNode* node = new PolynomialsNode(res);
         polynomials->Insert_back(node);
         ChangeList();
@@ -126,7 +138,7 @@ void MainWindow::on_findMultiplicationButton_clicked()
     auto i = polynomials->MultiplicationPolynomials(polynomials->Get_element(ui->multiplicationSpinBox1->value()),
                                                    polynomials->Get_element(ui->multiplicationSpinBox2->value()));
     ui->multiplicationResLabel->setText(QString::fromStdString(i->GetString()));
-    if(ui->multiplicationRadioButton->isChecked()){
+    if(ui->multiplicationCheckBox->isChecked()){
         PolynomialsNode* node = new PolynomialsNode(i);
         polynomials->Insert_back(node);
         ChangeList();
@@ -268,3 +280,34 @@ void MainWindow::on_loadPushButton_clicked()
         ChangeList();
     }
 }
+
+void MainWindow::on_findDivisionPushButton_clicked()
+{
+    if(ui->listWidget->count() == 0) return;
+    auto first_polynomial = polynomials->Get_element(ui->divisionFirstSpinBox->value())->polynomial;
+    auto second_polynomial = polynomials->Get_element(ui->divisionSecondSpinBox->value())->polynomial;
+    if(!(*second_polynomial->head < *first_polynomial->head) && !(*second_polynomial->head == *first_polynomial->head)){
+        QMessageBox::critical(this, "Incorrect input", "1st polynomial is less than 2nd");
+        return;
+    }
+    if(first_polynomial->Sum_bases() > 1 || second_polynomial->Sum_bases() > 1){
+        QMessageBox::critical(this, "Incorrect input", "more than 1 variable");
+        return;
+    }
+
+    auto i = polynomials->DivisionPolynomials(polynomials->Get_element(ui->divisionFirstSpinBox->value()),
+                                              polynomials->Get_element(ui->divisionSecondSpinBox->value()));
+    ui->partialLabel->setText(QString::fromStdString(i.first->GetString()));
+    ui->remainderLabel->setText(QString::fromStdString(i.second->GetString()));
+    if(ui->divisionPartialCheckBox->isChecked()){
+        PolynomialsNode* node = new PolynomialsNode(i.first);
+        polynomials->Insert_back(node);
+        ChangeList();
+    }
+    if(ui->divisionRemainderCheckBox->isChecked()){
+        PolynomialsNode* node = new PolynomialsNode(i.second);
+        polynomials->Insert_back(node);
+        ChangeList();
+    }
+}
+

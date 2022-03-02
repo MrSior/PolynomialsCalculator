@@ -26,6 +26,7 @@ public:
     void Count_bases();
     int Get_free_node(int& offset);
     int Count_value(int value, int offset);
+    int Sum_bases();
     std::string  GetString();
 };
 

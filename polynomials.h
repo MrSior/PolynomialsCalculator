@@ -18,6 +18,7 @@ public:
     Polynomial* SumPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node);
     Polynomial* FindDerivative(PolynomialsNode* polynomials_node, char base, int order);
     Polynomial* MultiplicationPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node);
+    std::pair<Polynomial*, Polynomial*> DivisionPolynomials(PolynomialsNode* first_polynomials_node, PolynomialsNode* second_polynomials_node);
     void CheckString(std::string str);
     PolynomialsNode* Get_element(int i);
     void Erase_node(int i);
